@@ -1,25 +1,120 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Reproducible Research - Peer Assessment 1"
+output: html_document
 ---
 
+####Loading and Preprocessing the Data
 
-## Loading and preprocessing the data
+#####Load the Data
+```{r}
+setwd("~/RWD/RepDataPA1")
+actdata <- read.csv("activity.csv", colClasses = c("numeric", "character", "numeric"))
+head(actdata)
+```
+
+#####Process/Transform the data
+```{r}
+names(actdata)
+```
+
+```{r}
+library(lattice)
+```
+
+```{r}
+actdata$date <- as.Date(actdata$date, "%Y-%m-%d")
+```
 
 
 
-## What is mean total number of steps taken per day?
+####What is Mean Total Number of Steps Per Day?
 
 
-
-## What is the average daily activity pattern?
-
+#####Calculate the total number of steps taken per day
 
 
-## Imputing missing values
+```{r}
+TotalSteps <- aggregate(steps ~ date, data = actdata, sum, na.rm = TRUE)
+```
+
+#####Plot a histogram of the total number of steps taken each day
+```{r}
+hist(TotalSteps$steps, main = "Total Steps By Day", xlab = "day", col = "blue")
+```
+
+#####Calculate and report the mean and median of the total number of steps taken per day
+
+```{r}
+mean(TotalSteps$steps)
+median(TotalSteps$steps)
+```
+
+####What is The Average Daily Activity Pattern?
+
+#####Make a time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
+
+```{r}
+time_series <- tapply(actdata$steps, actdata$interval, mean, na.rm = TRUE)
+plot(row.names(time_series), time_series, type = "l", xlab = "5-min Interval", 
+     ylab = "AVG Across All Days", main = "AVG Number of Steps Taken", 
+     col = "blue")
+```
+
+#####Which 5-minute interval, on average across all of the days in the dataset, contains the maximum number of steps?
+
+```{r}
+IntervalMax <- which.max(time_series)
+names(IntervalMax)
+```
+
+####Imputing Missing Values
+
+#####Calculate and report the total number of missing values in the dataset
+
+```{r}
+activity_NA <- sum(is.na(actdata))
+activity_NA
+```
+
+#####Devise a strategy for filling in all of the missing values in the dataset
+
+```{r}
+AvgSteps <- aggregate(steps ~ interval, data = actdata, FUN = mean)
+NAData <- numeric()
+for (i in 1:nrow(actdata)) {
+        obs <- actdata[i, ]
+        if (is.na(obs$steps)) {
+                steps <- subset(AvgSteps, interval == obs$interval)$steps
+        } else {
+                steps <- obs$steps
+        }
+        NAData <- c(NAData, steps)
+}
+```
+
+#####Create a new dataset that is equal to the original dataset but with the missing data filled in
+
+```{r}
+new_actdata <- actdata
+new_actdata$steps <- NAData
+```
+
+#####Make a histogram of the total number of steps taken each day and calculate and report the mean and median total number of steps taken per day.
+######Histogram
+```{r}
+TotalSteps2 <- aggregate(steps ~ date, data = new_actdata, sum, na.rm = TRUE)
+hist(TotalSteps2$steps, main = "Total steps by day", xlab = "day", col = "blue")
+```
+
+######Mean & Median:
+```{r}
+mean(TotalSteps2$steps)
+median(TotalSteps2$steps)
+```
+
+######Results Analysis
+The Mean has stayed the same but the Median has altered slightly. 
+
+####Are There Differences In Activity Patterns Between Weekdays And Weekends?
 
 
-
-## Are there differences in activity patterns between weekdays and weekends?
