@@ -117,4 +117,31 @@ The Mean has stayed the same but the Median has altered slightly.
 
 ####Are There Differences In Activity Patterns Between Weekdays And Weekends?
 
+#####Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+```{r}
+day <- weekdays(actdata$date)
+daylevel <- vector()
+for (i in 1:nrow(actdata)) {
+        if (day[i] == "Saturday") {
+                daylevel[i] <- "Weekend"
+        } else if (day[i] == "Sunday") {
+                daylevel[i] <- "Weekend"
+        } else {
+                daylevel[i] <- "Weekday"
+        }
+}
+actdata$daylevel <- daylevel
+actdata$daylevel <- factor(actdata$daylevel)
+
+stepsByDay <- aggregate(steps ~ interval + daylevel, data = actdata, mean)
+names(stepsByDay) <- c("interval", "daylevel", "steps")
+```
+
+#####Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days.
+
+```{r}
+xyplot(steps ~ interval | daylevel, stepsByDay, type = "l", layout = c(1, 2), 
+       xlab = "Interval", ylab = "Number Of Steps")
+```
 
