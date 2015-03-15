@@ -3,7 +3,7 @@ title: "Reproducible Research - Peer Assessment 1"
 output: html_document
 ---
 
-####Loading and Preprocessing the Data
+####Loading and Preprocessing the Data\s\s
 
 #####Load the Data
 ```{r}
@@ -27,7 +27,7 @@ actdata$date <- as.Date(actdata$date, "%Y-%m-%d")
 
 
 
-####What is Mean Total Number of Steps Per Day?
+####What is Mean Total Number of Steps Per Day?\s\s
 
 
 #####Calculate the total number of steps taken per day
@@ -49,7 +49,7 @@ mean(TotalSteps$steps)
 median(TotalSteps$steps)
 ```
 
-####What is The Average Daily Activity Pattern?
+####What is The Average Daily Activity Pattern?\s\s
 
 #####Make a time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
 
@@ -67,7 +67,7 @@ IntervalMax <- which.max(time_series)
 names(IntervalMax)
 ```
 
-####Imputing Missing Values
+####Imputing Missing Values\s\s
 
 #####Calculate and report the total number of missing values in the dataset
 
@@ -115,7 +115,7 @@ median(TotalSteps2$steps)
 ######Results Analysis
 The Mean has stayed the same but the Median has altered slightly. 
 
-####Are There Differences In Activity Patterns Between Weekdays And Weekends?
+####Are There Differences In Activity Patterns Between Weekdays And Weekends?\s\s
 
 #####Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
@@ -134,14 +134,14 @@ for (i in 1:nrow(actdata)) {
 actdata$daylevel <- daylevel
 actdata$daylevel <- factor(actdata$daylevel)
 
-stepsByDay <- aggregate(steps ~ interval + daylevel, data = actdata, mean)
-names(stepsByDay) <- c("interval", "daylevel", "steps")
+StepsByDay <- aggregate(steps ~ interval + daylevel, data = actdata, mean)
+names(StepsByDay) <- c("interval", "daylevel", "steps")
 ```
 
 #####Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days.
 
 ```{r}
-xyplot(steps ~ interval | daylevel, stepsByDay, type = "l", layout = c(1, 2), 
+xyplot(steps ~ interval | daylevel, StepsByDay, type = "l", layout = c(1, 2), 
        xlab = "Interval", ylab = "Number Of Steps")
 ```
 
